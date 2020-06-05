@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="driver.css">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto:wght@500&display=swap" rel="stylesheet">
+	<title>Who Should Drive</title>
+</head>
+<body>
+	<div id="app">
+	<h1>Who Should Drive?</h1>
+
+	<ul id="names">
+	</ul>
+	
+	<input type="text" id="potential-driver" placeholder="Name of driver...">
+	<button id="add-driver">Add Driver</button> <br><br>
+	<button id="pick-driver">Who's Driving?</button>
+	<button id="clear">Clear</button>
+
+	<div id="driver"></div>
+	</div>
+	<script>
+		//Variables
+		var add = document.querySelector('#add-driver');
+		var pick = document.querySelector('#pick-driver');
+		var names = document.querySelector('#names');
+		var driver = document.querySelector('#driver');
+		var newName = document.querySelector('#potential-driver');
+		var clear = document.querySelector('#clear');
+		var drivers = [];
+
+		//Shuffle array of drivers and pick one
+		var shuffle = function(arr) {
+			//Create clone of the array so we don't suffle the original one
+			var arrClone = arr.slice(0);
+			//Shuffle array
+			return arrClone.sort(function() {
+				return Math.random() - 0.5;
+			})
+		}
+
+		//Add Drivers, append list items to list created above and push items into drivers list which will be used to select
+		add.addEventListener('click', function(event) {
+			names.innerHTML += '<li>' + newName.value + '</li>';
+			drivers.push(newName.value);
+			newName.value = '';
+			newName.focus();
+			localStorage.setItem('whoShouldDrive', drivers.toString());
+			console.log(drivers);
+
+		}
+			,false);
+
+		//Select Driver
+		pick.addEventListener('click', function(event) {
+			var randomize = shuffle(drivers);
+			driver.innerHTML = randomize[0];
+		},false);
+
+		//Clear drivers
+		clear.addEventListener('click', function(event){
+			names.innerHTML = '';
+			drivers = [];
+			localStorage.removeItem('whoShouldDrive');
+		}, false);
+
+		//Load list from local storage i.e maintain the list even when we refresh the page
+		var savedDrivers = localStorage.getItem('whoShouldDrive');
+		if (savedDrivers) {
+			drivers = savedDrivers.split(',');
+			for (var i = 0; i < drivers.length; i++) {
+				names.innerHTML += '<li>' + drivers[i] +'</li>';
+			}
+		}
+
+	</script>
+</body>
+</html>
